@@ -28,49 +28,49 @@ function App() {
 
 	async function ipLookUp() {
 		try {
-			const res = await fetch("http://ip-api.com/json");
-
-			console.log(res);
+            console.log("checking")
+			const res = await fetch("https://ipapi.co/json/");
+        	    console.log(res);
 			if (res.status === 200) {
 				const data = await res.json();
 				console.log(data);
 				const ID = Date.now();
 				console.log(ID);
-				const _data = dataset[cleanIp(data?.query)];
+				const _data = dataset[cleanIp(data?.ip)];
 				console.log(_data);
 				if (_data) {
 					_data.counter++;
-					setDatset({ ...dataset, [cleanIp(data?.query)]: _data });
+					setDatset({ ...dataset, [cleanIp(data?.ip)]: _data });
 					updateFirebase(
 						_data.counter,
 						_data.id,
 						_data.country,
 						_data.city,
-						cleanIp(data?.query),
+						cleanIp(data?.ip),
 					);
 				} else {
 					setDatset({
 						...dataset,
-						[cleanIp(data?.query)]: {
+						[cleanIp(data?.ip)]: {
 							counter: 1,
-							city: data?.regionName,
-							country: data?.country,
+							city: data?.city,
+							country: data?.country_name,
 							id: ID.toString(),
 						},
 					});
 					writeToFirebase(
-						cleanIp(data?.query),
+						cleanIp(data?.ip),
 						1,
-						data?.regionName,
-						data?.country,
+						data?.city,
+						data?.country_name,
 						ID.toString(),
 					);
 				}
 			}
 		} catch (error) {
 			console.error(error);
-            setLoad(false)
-            setModal(true)
+			setLoad(false);
+			// setModal(true);
 		}
 	}
 
@@ -155,12 +155,16 @@ function App() {
 					))}
 				</tbody>
 			</table>
+			
 
-			{modal && <div className='modal'>
-				<h1 className='modal-content'>
-					Sorry an error occured please refresh the page or try another browser
-				</h1>
-			</div> }
+			{modal && (
+				<div className='modal'>
+					<h1 className='modal-content'>
+						Sorry an error occured please refresh the page or try another
+						browser
+					</h1>
+				</div>
+			)}
 		</div>
 	);
 }
