@@ -69,6 +69,7 @@ function App() {
 			}
 		} catch (error) {
 			console.error(error);
+            setLoad(false)
             setModal(true)
 		}
 	}
